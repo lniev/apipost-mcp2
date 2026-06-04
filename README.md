@@ -1,4 +1,4 @@
-# ApiPost MCP@
+# ApiPost MCP2
 
 基于 MCP 协议和 [ApiPost 官方 OpenAPI](https://docs.apipost.net/docs/detail/2a37986cbc64000?target_id=23796913b176e1) 实现的 API 文档管理工具。
 
