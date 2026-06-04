@@ -9,7 +9,10 @@
     "start": "node -r dotenv/config dist/index.js",
     "dev": "tsx src/index.ts",
     "watch": "tsx watch src/index.ts",
-    "debugger": "npx @modelcontextprotocol/inspector tsx -r dotenv/config src/index.ts"
+    "debugger": "npx @modelcontextprotocol/inspector tsx -r dotenv/config src/index.ts",
+    "gen:mcp-json": "node scripts/gen-mcp-json.mjs",
+    "setup:claude-code": "npm run gen:mcp-json && node scripts/setup-claude-code.mjs",
+    "setup:codex": "npm run gen:mcp-json && node scripts/setup-codex.mjs"
   },
   "keywords": [
     "mcp",

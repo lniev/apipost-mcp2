@@ -84,6 +84,8 @@ npm install && npm run build
 | `npm run dev` | 开发模式运行 |
 | `npm run watch` | 开发模式热更新 |
 | `npm run debugger` | 使用 MCP Inspector 调试 |
+| `npm run setup:claude-code` | 将 apipost MCP 配置同步到 Claude Code（`~/.claude.json`） |
+| `npm run setup:codex` | 将 apipost MCP 配置同步到 Codex（`~/.codex/config.toml`） |
 
 ## 配置
 
@@ -286,6 +288,28 @@ apipost_schema_to_types target_id: "api_123" output_ts: true output_jsdoc: true
 1. [ApiPost OpenApi 官方文档查看](https://docs.apipost.net/docs/detail/2a37986cbc64000?target_id=0)
 2. 用户 api_token。获取方式：Apipost 客户端 > 工作台 > 项目设置 > 对外能力 > open API
 
+## 一键配置到 AI 编辑器
+
+本项目提供快捷脚本，可将 `mcp.json` 中的 apipost 配置一键同步到主流 AI 编辑器的 MCP 配置中。
+
+### Claude Code
+
+```bash
+npm run setup:claude-code
+```
+
+将配置写入 `~/.claude.json`（全局生效，所有项目可用）。
+
+### Codex (OpenAI)
+
+```bash
+npm run setup:codex
+```
+
+将配置写入 `~/.codex/config.toml`（TOML 格式，全局生效）。
+
+**注意：** 运行前请确保 `mcp.json` 中的环境变量已填写真实值。
+
 ## 更新日志
 
 查看 [CHANGELOG.md](CHANGELOG.md) 了解版本更新信息。
@@ -304,6 +328,3 @@ apipost_schema_to_types target_id: "api_123" output_ts: true output_jsdoc: true
 
 - [ApiPost OpenAPI 文档](https://docs.apipost.net/docs/detail/2a37986cbc64000?target_id=23796913b176e1)
 - [MCP 协议说明](https://github.com/modelcontextprotocol/specification)
-
-
-如果这个项目对你有帮助，请给我们一个星标！
