@@ -16,29 +16,18 @@
 - **权限管理** - 多种安全模式，灵活的操作权限控制
 - **Schema 转类型** - 将接口 JSON Schema 转换为 TypeScript 类型定义和 JSDoc 注释
 
-## 项目结构
+## 使用流程
 
-```
-apipost-mcp/
-├── src/
-│   ├── index.ts              # MCP 服务器入口，注册工具和启动服务
-│   ├── config/               # 环境变量、安全模式、URL 前缀处理
-│   ├── workspace/            # 工作空间管理（团队/项目初始化与切换）
-│   ├── api-client/           # ApiPost OpenAPI 封装（axios 客户端）
-│   ├── tools/                # MCP 工具定义与处理器
-│   │   ├── definitions.ts    # 工具 schema 定义
-│   │   └── handlers.ts       # 工具业务逻辑
-│   ├── schema/               # JSON Schema 处理、Body 构建、响应标准化、TS/JSDoc 生成
-│   ├── types/                # TypeScript 类型定义
-│   └── utils/                # 通用工具函数（参数转换、字段扩展、JSON 构建等）
-├── package.json
-├── tsconfig.json
-└── README.md
+### 1. 下载
+
+```bash
+git clone https://github.com/lniev/apipost-mcp.git
+cd apipost-mcp
 ```
 
-## 安装
+### 2. 安装
 
-### 环境要求
+#### 环境要求
 
 | 环境 | 版本要求 | 说明 |
 |------|---------|------|
@@ -67,15 +56,64 @@ node --version   # 应显示 v18.0.0 或更高版本
 npm --version    # 应显示 8.0.0 或更高版本
 ```
 
-### 开始安装
+#### 安装依赖并构建
 
 ```bash
-git clone https://github.com/lniev/apipost-mcp.git
-cd apipost-mcp
 npm install && npm run build
 ```
 
-### 常用脚本
+### 3. 配置环境变量
+
+在项目根目录创建 `.env` 文件（已包含在 `.gitignore` 中，不会被提交到 Git）：
+
+```bash
+touch .env
+```
+
+编辑 `.env` 文件，添加所需的环境变量：
+
+```env
+APIPOST_TOKEN=your_access_token_here
+APIPOST_HOST=https://open.apipost.net
+APIPOST_SECURITY_MODE=limited
+APIPOST_DEFAULT_TEAM_NAME=你的团队名称
+APIPOST_DEFAULT_PROJECT_NAME=你的项目名称
+APIPOST_URL_PREFIX={{host}}
+APIPOST_INLINE_COMMENTS=true
+```
+
+**环境变量说明：**
+
+| 变量名 | 是否必需 | 说明 |
+|--------|------|------|
+| `APIPOST_TOKEN` | 是 | API 访问令牌 |
+| `APIPOST_SECURITY_MODE` | 否 | 安全模式：`readonly`, `limited`, `full` |
+| `APIPOST_DEFAULT_TEAM_NAME` | 否 | 默认团队名称 |
+| `APIPOST_DEFAULT_PROJECT_NAME` | 否 | 默认项目名称 |
+| `APIPOST_URL_PREFIX` | 否 | 接口 URL 前缀，自动拼接到所有新建/修改的接口路径，如 `{{host}}` |
+| `APIPOST_INLINE_COMMENTS` | 否 | 是否开启行内注释，设置为 `true` 时 raw 会按 `desc` 生成行内注释 |
+
+#### 安全模式说明
+
+| 模式 | 权限 | 说明 |
+|------|------|------|
+| `readonly` | 只读 | 仅允许查看接口列表和详情，禁止创建、修改、删除 |
+| `limited` | 读写 | 允许查看、创建、修改接口，禁止删除操作 |
+| `full` | 完全访问 | 允许所有操作，包括查看、创建、修改、删除 |
+
+#### 获取 Token
+
+1. [ApiPost OpenApi 官方文档查看](https://docs.apipost.net/docs/detail/2a37986cbc64000?target_id=0)
+2. 用户 api_token。获取方式：Apipost 客户端 > 工作台 > 项目设置 > 对外能力 > open API
+
+### 4. 启动本地服务
+
+```bash
+# 启动服务（自动加载 .env）
+npm run start
+```
+
+**其他可用脚本：**
 
 | 脚本 | 说明 |
 |------|------|
@@ -84,10 +122,30 @@ npm install && npm run build
 | `npm run dev` | 开发模式运行 |
 | `npm run watch` | 开发模式热更新 |
 | `npm run debugger` | 使用 MCP Inspector 调试 |
-| `npm run setup:claude-code` | 将 apipost MCP 配置同步到 Claude Code（`~/.claude.json`） |
-| `npm run setup:codex` | 将 apipost MCP 配置同步到 Codex（`~/.codex/config.toml`） |
 
-## 配置
+### 5. 快捷命令配置 MCP
+
+本项目提供快捷脚本，可将 `mcp.json` 中的 apipost 配置一键同步到主流 AI 编辑器的 MCP 配置中。
+
+#### Claude Code
+
+```bash
+npm run setup:claude-code
+```
+
+将配置写入 `~/.claude.json`（全局生效，所有项目可用）。
+
+#### Codex (OpenAI)
+
+```bash
+npm run setup:codex
+```
+
+将配置写入 `~/.codex/config.toml`（TOML 格式，全局生效）。
+
+**注意：** 运行前请确保 `mcp.json` 中的环境变量已填写真实值。
+
+### 6. 手动配置 mcp.json
 
 在 MCP 配置文件中添加：
 
@@ -111,58 +169,27 @@ npm install && npm run build
 }
 ```
 
-### 环境变量
-
-| 变量名 | 是否必需 | 说明 |
-|--------|------|------|
-| `APIPOST_TOKEN` | 是 | API 访问令牌 |
-| `APIPOST_SECURITY_MODE` | 否 | 安全模式：`readonly`, `limited`, `full` |
-| `APIPOST_DEFAULT_TEAM_NAME` | 否 | 默认团队名称 |
-| `APIPOST_DEFAULT_PROJECT_NAME` | 否 | 默认项目名称 |
-| `APIPOST_URL_PREFIX` | 否 | 接口 URL 前缀，自动拼接到所有新建/修改的接口路径，如 `{{host}}` |
-| `APIPOST_INLINE_COMMENTS` | 否 | 是否开启行内注释，设置为 `true` 时 raw 会按 `desc` 生成行内注释 |
-
-#### 使用 .env 文件配置环境变量
-
-本项目已集成 `dotenv`，支持通过 `.env` 文件设置环境变量，无需修改系统环境变量或 MCP 配置文件。
-
-**操作步骤：**
-
-1. 在项目根目录创建 `.env` 文件（已包含在 `.gitignore` 中，不会被提交到 Git）：
-
-   ```bash
-   touch .env
-   ```
-
-2. 编辑 `.env` 文件，添加所需的环境变量：
-
-   ```env
-   APIPOST_TOKEN=your_access_token_here
-   APIPOST_HOST=https://open.apipost.net
-   APIPOST_SECURITY_MODE=limited
-   APIPOST_DEFAULT_TEAM_NAME=你的团队名称
-   APIPOST_DEFAULT_PROJECT_NAME=你的项目名称
-   APIPOST_URL_PREFIX={{host}}
-   APIPOST_INLINE_COMMENTS=true
-   ```
-
-3. 启动服务时自动加载（`npm run start` 已内置 `dotenv` 加载）：
-
-   ```bash
-   npm run start
-   # 或开发模式
-   npm run dev
-   ```
-
 **优先级说明：** 系统环境变量 > `.env` 文件中的变量。如果 MCP 配置文件中也配置了相同的环境变量，MCP 配置的值会覆盖 `.env` 文件中的值。
 
-### 安全模式说明
+## 项目结构
 
-| 模式 | 权限 | 说明 |
-|------|------|------|
-| `readonly` | 只读 | 仅允许查看接口列表和详情，禁止创建、修改、删除 |
-| `limited` | 读写 | 允许查看、创建、修改接口，禁止删除操作 |
-| `full` | 完全访问 | 允许所有操作，包括查看、创建、修改、删除 |
+```
+apipost-mcp/
+├── src/
+│   ├── index.ts              # MCP 服务器入口，注册工具和启动服务
+│   ├── config/               # 环境变量、安全模式、URL 前缀处理
+│   ├── workspace/            # 工作空间管理（团队/项目初始化与切换）
+│   ├── api-client/           # ApiPost OpenAPI 封装（axios 客户端）
+│   ├── tools/                # MCP 工具定义与处理器
+│   │   ├── definitions.ts    # 工具 schema 定义
+│   │   └── handlers.ts       # 工具业务逻辑
+│   ├── schema/               # JSON Schema 处理、Body 构建、响应标准化、TS/JSDoc 生成
+│   ├── types/                # TypeScript 类型定义
+│   └── utils/                # 通用工具函数（参数转换、字段扩展、JSON 构建等）
+├── package.json
+├── tsconfig.json
+└── README.md
+```
 
 ## 可用工具
 
@@ -282,33 +309,6 @@ apipost_schema_to_types target_id: "api_123" output_ts: true output_jsdoc: true
   "response": { "ts": "export interface Response { ... }", "jsdoc": "" }
 }
 ```
-
-## 获取 Token
-
-1. [ApiPost OpenApi 官方文档查看](https://docs.apipost.net/docs/detail/2a37986cbc64000?target_id=0)
-2. 用户 api_token。获取方式：Apipost 客户端 > 工作台 > 项目设置 > 对外能力 > open API
-
-## 一键配置到 AI 编辑器
-
-本项目提供快捷脚本，可将 `mcp.json` 中的 apipost 配置一键同步到主流 AI 编辑器的 MCP 配置中。
-
-### Claude Code
-
-```bash
-npm run setup:claude-code
-```
-
-将配置写入 `~/.claude.json`（全局生效，所有项目可用）。
-
-### Codex (OpenAI)
-
-```bash
-npm run setup:codex
-```
-
-将配置写入 `~/.codex/config.toml`（TOML 格式，全局生效）。
-
-**注意：** 运行前请确保 `mcp.json` 中的环境变量已填写真实值。
 
 ## 更新日志
 
