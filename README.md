@@ -310,10 +310,6 @@ apipost_schema_to_types target_id: "api_123" output_ts: true output_jsdoc: true
 }
 ```
 
-## 更新日志
-
-查看 [CHANGELOG.md](CHANGELOG.md) 了解版本更新信息。
-
 ---
 
 **提示**：这是一个专注于 API 接口管理的 MCP 工具，简化了接口创建和管理流程，提高团队协作效率。
